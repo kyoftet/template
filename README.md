@@ -1,16 +1,12 @@
 # TODO
-## backend
-* migration
-* multi stage build
-
 ## frontend
 * workflowでfmtとlint
-* multi stage build
 * crud実装
 
-## other
-* compose.prod.yaml
-* readme.mdの整理
+## TODO
+* gorm ver
+* no auth
+* no redis
 
 # How To Setup
 ```
@@ -22,4 +18,19 @@ docker compose up -d
 ```
 cp .env.template .env
 docker compose -f compose.prod.yaml up -d
+```
+
+# Migration
+```sh
+# create table schema by go
+docker compose exec backend go run -mod=mod entgo.io/ent/cmd/ent init ${Model}
+
+### Edit ./infrastructure/mysql/ent/schema/${model}.go ###
+
+# create ent file for database model
+docker compose exec backend go generate ./ent
+# create migration file
+docker compose exec backend go run -mod=mod ./cmd/migration/main.go ${migration_file_name}
+# migration
+docker compose exec backend bash -c 'atlas migrate status --dir "file://infrastructure/mysql/migrations" --url mysql://$MYSQL_USER:$MYSQL_PASSWORD@$MYSQL_HOST:$MYSQL_PORT/$MYSQL_DATABASE'
 ```

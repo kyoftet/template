@@ -24,7 +24,7 @@ func main() {
 	)
 	ctx := context.Background()
 
-	dir, err := atlas.NewLocalDir("../../infrastructure/mysql/ent/migrate/migrations")
+	dir, err := atlas.NewLocalDir("./infrastructure/mysql/migrations")
 	if err != nil {
 		log.Fatalf("failed creating atlas migration directory: %v", err)
 	}

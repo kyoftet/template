@@ -1,0 +1,71 @@
+services:
+  backend:
+    container_name: backend
+    hostname: backend
+    build:
+      context: ./backend
+      dockerfile: ./docker/Dockerfile
+    environment:
+      TZ: Asia/Tokyo
+    ports:
+      - ${BACKEND_PORT}:8000
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - template
+    volumes:
+      - ./backend:/app
+      - ./.env:/app/.env
+
+  frontend:
+    container_name: frontend
+    hostname: frontend
+    build:
+      context: ./frontend
+      dockerfile: ./docker/Dockerfile
+    environment:
+      TZ: Asia/Tokyo
+    ports:
+      - ${FRONTEND_PORT}:3000
+    networks:
+      - template
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    tty: true
+    stdin_open: true
+
+  mysql:
+    container_name: mysql
+    build: services/mysql
+    hostname: ${MYSQL_HOST}
+    ports:
+      - ${MYSQL_PORT}:3306
+    environment:
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_NAME}
+      TZ: Asia/Tokyo
+    volumes:
+      - mysql-data:/var/lib/mysql-files
+    networks:
+      - template
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u $MYSQL_USER -p $MYSQL_PASSWORD
+
+  redis:
+    container_name: redis
+    build: services/redis
+    hostname: redis
+    ports:
+      - ${REDIS_PORT}:6379
+    networks:
+      - template
+
+volumes:
+  mysql-data:
+
+networks:
+  template:

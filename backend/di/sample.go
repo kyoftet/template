@@ -1,7 +1,7 @@
 package di
 
-import "backend/presentation/api/router"
+import "backend/presentation/rest/controller"
 
-func Sample() router.Sample {
-	return router.NewSample()
+func Sample() controller.Sample {
+	return controller.NewSample()
 }

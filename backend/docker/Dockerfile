@@ -1,12 +1,15 @@
-FROM golang:1.24-alpine
-
+####################### Build stage #######################
+FROM golang:1.24-alpine AS builder
 WORKDIR /app
-
-RUN curl -sSf https://atlasgo.sh | sh
-
-RUN go install github.com/air-verse/air@latest
-
 COPY go.mod go.sum ./
 RUN go mod download
+COPY . .
+RUN go build -o main /app/cmd/api/main.go
 
-CMD ["air", "-c", ".air.toml"]
+
+####################### Run stage #######################
+FROM alpine:3.13
+WORKDIR /app
+COPY --from=builder /app/main .
+EXPOSE 8000
+CMD [ "./main" ]

@@ -15,4 +15,11 @@
 # How To Setup
 ```
 cp .env.template .env
+docker compose up -d
+```
+
+# Build
+```
+cp .env.template .env
+docker compose -f compose.prod.yaml up -d
 ```

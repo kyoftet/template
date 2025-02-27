@@ -1,4 +1,4 @@
-package router
+package controller
 
 import (
 	"backend/application/dto"

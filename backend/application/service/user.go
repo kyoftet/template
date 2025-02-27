@@ -2,7 +2,7 @@ package service
 
 import (
 	"backend/application/dto"
-	"backend/domain/entity"
+	"backend/application/dto/mapper"
 	"backend/domain/repository"
 )
 
@@ -21,7 +21,7 @@ func NewUser(userRepository repository.User) User {
 }
 
 func (u *user) SignUp(dtoUser *dto.User) error {
-	user := dtoTransferEntity(dtoUser)
+	user := mapper.ToUserEntity(dtoUser)
 	// TODO: 同じid、メールアドレスの場合はエラー
 	return u.userRepository.Insert(user)
 }
@@ -32,16 +32,6 @@ func (u *user) Delete(userId string) error {
 
 func (u *user) Update(dtoUser *dto.User) error {
 	// TODO: 同じid, メールアドレスの場合はエラー
-	user := dtoTransferEntity(dtoUser)
+	user := mapper.ToUserEntity(dtoUser)
 	return u.userRepository.Update(user)
-}
-
-func dtoTransferEntity(dtoUser *dto.User) *entity.User {
-	return entity.NewUser(
-		dtoUser.ID,
-		dtoUser.Name,
-		dtoUser.MailAddress,
-		dtoUser.Password,
-		dtoUser.Introduction,
-	)
 }

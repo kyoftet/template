@@ -3,16 +3,22 @@ package mysqlconf
 import (
 	"backend/infrastructure/mysql/ent"
 	"backend/util"
-	"fmt"
+	"github.com/go-sql-driver/mysql"
 )
 
 func GetDB() (*ent.Client, error) {
-	dsn := fmt.Sprintf("mysql://%s:%s@%s:%s/%s?charset=utf8&parseTime=True",
-		util.GetEnv("MYSQL_USER", "user"),
-		util.GetEnv("MYSQL_PASSWORD", "password"),
-		util.GetEnv("MYSQL_HOST", "localhost"),
-		util.GetEnv("MYSQL_PORT", "3306"),
-		util.GetEnv("MYSQL_NAME", "template"),
-	)
-	return ent.Open("mysql", dsn)
+	entOptions := []ent.Option{}
+	entOptions = append(entOptions, ent.Debug())
+
+	c := mysql.Config{
+		User:                 util.GetEnv("MYSQL_USER", ""),
+		Passwd:               util.GetEnv("MYSQL_PASSWORD", ""),
+		Net:                  "tcp",
+		Addr:                 util.GetEnv("MYSQL_HOST", "") + ":" + util.GetEnv("MYSQL_PORT", ""),
+		DBName:               util.GetEnv("MYSQL_DATABASE", ""),
+		AllowNativePasswords: true,
+		ParseTime:            true,
+	}
+
+	return ent.Open("mysql", c.FormatDSN(), entOptions...)
 }

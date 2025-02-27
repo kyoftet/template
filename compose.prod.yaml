@@ -4,7 +4,7 @@ services:
     hostname: backend
     build:
       context: ./backend
-      dockerfile: ./docker/Dockerfile.dev
+      dockerfile: ./docker/Dockerfile
     env_file:
       - .env
     ports:
@@ -14,24 +14,17 @@ services:
         condition: service_healthy
     networks:
       - template
-    volumes:
-      - ./backend:/app
 
   frontend:
     container_name: frontend
     hostname: frontend
     build:
       context: ./frontend
-      dockerfile: ./docker/Dockerfile.dev
-    environment:
-      TZ: Asia/Tokyo
+      dockerfile: ./docker/Dockerfile
     ports:
       - ${FRONTEND_PORT}:3000
     networks:
       - template
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
     tty: true
     stdin_open: true
 

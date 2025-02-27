@@ -7,7 +7,7 @@ import (
 	redisconf "backend/infrastructure/redis/conf"
 
 	"backend/di"
-	"backend/presentation/api"
+	"backend/presentation/rest"
 )
 
 func main() {
@@ -23,7 +23,7 @@ func main() {
 	}
 	defer redisDB.Close()
 
-	api.InitRoute(
+	rest.InitRoute(
 		di.User(mysqlDB),
 		di.Auth(mysqlDB, redisDB),
 		di.Sample(),

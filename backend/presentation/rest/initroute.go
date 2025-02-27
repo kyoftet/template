@@ -1,16 +1,16 @@
-package api
+package rest
 
 import (
-	"backend/presentation/api/router"
+	"backend/presentation/rest/controller"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
 func InitRoute(
-	userRouter router.User,
-	authRouter router.Auth,
-	sampleRouter router.Sample,
+	userRouter controller.User,
+	authRouter controller.Auth,
+	sampleRouter controller.Sample,
 ) {
 	e := echo.New()
 

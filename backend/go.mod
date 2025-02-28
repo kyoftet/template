@@ -6,7 +6,6 @@ require (
 	ariga.io/atlas v0.31.1-0.20250212144724-069be8033e83
 	entgo.io/ent v0.14.2
 	github.com/go-sql-driver/mysql v1.9.0
-	github.com/google/uuid v1.3.0
 	github.com/labstack/echo/v4 v4.13.3
 	github.com/redis/go-redis/v9 v9.7.0
 )
@@ -21,6 +20,7 @@ require (
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/go-openapi/inflect v0.19.0 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.13.0 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect

@@ -1,0 +1,12 @@
+**/.dockerignore
+**/.env
+**/.git
+**/.gitignore
+**/.cache
+LICENSE
+README.md
+**/docker
+**/compose*.yml
+**/node_modules
+**/styled-system
+**/.next

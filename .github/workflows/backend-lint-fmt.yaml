@@ -1,10 +1,16 @@
 name: Go Lint and Format
 
-on: [push, pull_request]
+on:
+  pull_request:
+    types: [opened, synchronize]
+  push:
 
 jobs:
   lint-and-format:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
 
     steps:
     - name: Checkout repository
@@ -18,7 +24,7 @@ jobs:
 
     - name: Run go fmt
       run: |
-        go fmt ./backend/...
+        go fmt ./...
 
     - name: Run golangci-lint
       uses: golangci/golangci-lint-action@v4
@@ -26,10 +32,10 @@ jobs:
         # Require: The version of golangci-lint to use.
         # When `install-mode` is `binary` (default) the value can be v1.2 or v1.2.3 or `latest` to use the latest version.
         # When `install-mode` is `goinstall` the value can be v1.2.3, `latest`, or the hash of a commit.
-        version: v1.62
+        version: v1.64
         # Optional: working directory, useful for monorepos
         # working-directory: somedir
-        working-directory: ./backend
+        # working-directory: ./backend
 
         # Optional: golangci-lint command line arguments.
         #

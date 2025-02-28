@@ -1,31 +1,40 @@
-FROM oven/bun:alpine AS base
+ARG NODE_VERSION=20
+ARG PNPM_VERSION=9
 
-# Step 1 - install dependencies
+FROM node:${NODE_VERSION}-slim AS base
+
 FROM base AS deps
 WORKDIR /app
-COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile
+COPY package.json pnpm-lock.yaml tsconfig.json ./
+RUN npm install -g pnpm@${PNPM_VERSION}
+RUN pnpm install --frozen-lockfile
 
-# Step 2 - rebuild the app
 FROM base AS builder
 WORKDIR /app
+ARG NEXT_PRIVATE_STANDALONE=true
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-ENV NEXT_TELEMETRY_DISABLED 1
-RUN bun run build
+RUN npm run build
 
-# Step 3 - copy all the files and run server
-FROM base AS runner
+FROM base AS final
 WORKDIR /app
 ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED 1
-RUN adduser --system --uid 1001 nextjs
-RUN mkdir .next
-RUN chown nextjs:bun .next
-COPY --from=builder --chown=nextjs:bun /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:bun /app/.next/static ./.next/static
 
-EXPOSE 3000
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
-CMD ["bun", "server.js"]
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+
+RUN mkdir .next
+RUN chown nextjs:nodejs .next
+
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 3001
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+CMD ["node", "server.js"]

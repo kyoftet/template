@@ -1,0 +1,44 @@
+name: Build Container Test
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create .env file
+        run: |
+          cp .env.template .env
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and test Docker Compose
+        run: |
+          docker compose -f compose.prod.yaml build
+          docker compose -f compose.prod.yaml up -d
+          # コンテナの起動を待機
+          sleep 30
+          
+          # 各サービスの健全性チェック
+          docker compose -f compose.prod.yaml ps
+          
+          # フロントエンドの応答確認
+          curl -f http://localhost:3000 || true
+          
+          # バックエンドの応答確認
+          curl -f http://localhost:8000/health || true
+          
+      - name: Show logs on failure
+        if: failure()
+        run: docker compose -f compose.prod.yaml logs
+
+      - name: Cleanup
+        if: always()
+        run: docker compose -f compose.prod.yaml down -v
